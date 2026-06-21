@@ -1,0 +1,42 @@
+name: Release
+
+# 发布流程：推送 v* 标签时构建产物并发布 dist.zip 到 GitHub Release。
+# 产物契约由后端 nezha 的 script/fetch-frontends.sh 决定：
+#   从 <repository>/releases/download/<version>/dist.zip 下载，解压后须得到 dist/ 目录。
+# 因此：release 标签名即版本号（对应后端 frontend-templates.yaml 的 version），
+#       资产名必须为 dist.zip，且压缩包内顶层为 dist/ 目录。
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & release dist.zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Package dist.zip
+        run: zip -r dist.zip dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist.zip
+          generate_release_notes: true

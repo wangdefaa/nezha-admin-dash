@@ -1,0 +1,37 @@
+name: CI
+
+# 校验：push 到主分支或提交 PR 时，依次跑 Prettier 格式检查、ESLint、类型检查与生产构建。
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Lint & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prettier check
+        run: npm run format:check
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Type check & build
+        run: npm run build
+
+      - name: Verify dist output
+        run: test -f dist/index.html && test -d dist/assets
