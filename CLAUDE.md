@@ -48,6 +48,7 @@ src/
 **分层职责**:`pages/` 用 SWR 读数据 + 编排;写操作调 `api/resources.ts`;表单 UI 放 `components/<domain>/*-sheet.tsx` 或 `*-dialog.tsx`;所有类型集中在 `types/index.ts`。
 
 **新增一个 CRUD 页的范式**(按顺序):
+
 1. `types/index.ts` — 加 `Xxx`(响应)与 `XxxForm`(提交)接口
 2. `api/resources.ts` — 加 `xxxApi = { create, update, batchDelete }`,走 `apiPost/apiPatch`
 3. `components/<domain>/xxx-edit-sheet.tsx` — 用 `Sheet`+`SheetBody/Footer` 写编辑抽屉(参考 `groups/group-edit-sheet.tsx`)

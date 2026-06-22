@@ -130,7 +130,7 @@ export default function SettingsPage() {
         {TABS.map((t) => (
           <button
             key={t.key}
-            className={`tab${tab === t.key ? " active" : ""}`}
+            className={`tab${tab === t.key ? "active" : ""}`}
             onClick={() => setTab(t.key)}
           >
             {t.label}

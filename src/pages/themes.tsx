@@ -110,7 +110,11 @@ export default function ThemesPage() {
         )}
       </TableCard>
 
-      <ThemeEditSheet open={sheetOpen} onClose={() => setSheetOpen(false)} onSaved={() => mutate()} />
+      <ThemeEditSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onSaved={() => mutate()}
+      />
       <ConfirmDialog
         open={!!confirm}
         onOpenChange={(o) => !o && setConfirm(null)}
@@ -151,9 +155,7 @@ function ThemeRow({
         {t.name}
         {isCurrent && <Badge className="ml-2">当前</Badge>}
       </td>
-      <td>
-        {t.is_admin ? <Chip variant="accent">管理端</Chip> : <Chip>访客端</Chip>}
-      </td>
+      <td>{t.is_admin ? <Chip variant="accent">管理端</Chip> : <Chip>访客端</Chip>}</td>
       <td>
         <Chip>{SOURCE_LABEL[t.source] ?? t.source}</Chip>
       </td>

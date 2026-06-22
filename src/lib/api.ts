@@ -79,7 +79,12 @@ export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
 
   let resp: Response
   try {
-    resp = await fetch(API_BASE + path, { method: "POST", headers, credentials: "include", body: form })
+    resp = await fetch(API_BASE + path, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: form,
+    })
   } catch {
     throw new ApiError("网络错误，请检查连接")
   }

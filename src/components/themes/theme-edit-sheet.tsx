@@ -100,11 +100,17 @@ export function ThemeEditSheet({
               <div>
                 <Label>主题 ZIP 包</Label>
                 <FileDropzone file={file} onChange={setFile} />
-                <p className="mt-1 text-[11.5px] text-meta">主题名取压缩包文件名；同名上传将覆盖更新。</p>
+                <p className="mt-1 text-[11.5px] text-meta">
+                  主题名取压缩包文件名；同名上传将覆盖更新。
+                </p>
               </div>
               <div>
                 <Label>版本号（可选）</Label>
-                <Input value={version} onChange={(e) => setVersion(e.target.value)} placeholder="例如 v1.0.0" />
+                <Input
+                  value={version}
+                  onChange={(e) => setVersion(e.target.value)}
+                  placeholder="例如 v1.0.0"
+                />
               </div>
             </>
           ) : (
@@ -119,13 +125,23 @@ export function ThemeEditSheet({
               </div>
               <div>
                 <Label>Release 资产文件名</Label>
-                <Input value={asset} onChange={(e) => setAsset(e.target.value)} placeholder="例如 dist.zip" />
+                <Input
+                  value={asset}
+                  onChange={(e) => setAsset(e.target.value)}
+                  placeholder="例如 dist.zip"
+                />
               </div>
               <div>
                 <Label>主题名称（可选）</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="留空则使用仓库名" />
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="留空则使用仓库名"
+                />
               </div>
-              <p className="text-[11.5px] text-meta">后台将拉取该仓库最新 release 的指定资产并解压入库。</p>
+              <p className="text-[11.5px] text-meta">
+                后台将拉取该仓库最新 release 的指定资产并解压入库。
+              </p>
             </>
           )}
 
@@ -160,7 +176,13 @@ type DropAreaProps = {
 }
 
 // FileDropzone 拖拽/点击上传区：空态显示拖拽提示，选中后展示文件名与大小。
-function FileDropzone({ file, onChange }: { file: File | null; onChange: (f: File | null) => void }) {
+function FileDropzone({
+  file,
+  onChange,
+}: {
+  file: File | null
+  onChange: (f: File | null) => void
+}) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [over, setOver] = useState(false)
 
@@ -175,11 +197,22 @@ function FileDropzone({ file, onChange }: { file: File | null; onChange: (f: Fil
 
   return (
     <div>
-      <input ref={inputRef} type="file" accept=".zip" hidden onChange={(e) => pick(e.target.files?.[0])} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".zip"
+        hidden
+        onChange={(e) => pick(e.target.files?.[0])}
+      />
       {file ? (
         <SelectedFile file={file} onClear={clear} />
       ) : (
-        <DropArea over={over} setOver={setOver} onPick={pick} onOpen={() => inputRef.current?.click()} />
+        <DropArea
+          over={over}
+          setOver={setOver}
+          onPick={pick}
+          onOpen={() => inputRef.current?.click()}
+        />
       )}
     </div>
   )
@@ -203,7 +236,9 @@ function DropArea({ over, setOver, onPick, onOpen }: DropAreaProps) {
       }}
       className={cn(
         "flex w-full flex-col items-center gap-1.5 rounded-md border border-dashed px-4 py-6 text-center transition-colors",
-        over ? "border-accent bg-accent-subtle" : "border-border hover:border-accent hover:bg-surface-2",
+        over
+          ? "border-accent bg-accent-subtle"
+          : "border-border hover:border-accent hover:bg-surface-2",
       )}
     >
       <UploadCloud className="h-6 w-6 text-meta" />
