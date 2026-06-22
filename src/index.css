@@ -829,6 +829,10 @@ textarea.input:disabled,
   gap: 2px;
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox：隐藏滚动条但保留可滚动 */
+}
+.tabs::-webkit-scrollbar {
+  display: none; /* WebKit：隐藏滚动条，避免占位导致切换时位移 */
 }
 .tab {
   height: 42px;

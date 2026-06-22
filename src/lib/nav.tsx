@@ -3,6 +3,7 @@ import {
   BellRing,
   Boxes,
   KeyRound,
+  Palette,
   Send,
   Server,
   Settings,
@@ -34,6 +35,7 @@ export const NAV: NavItem[] = [
   { label: "在线用户", path: "/settings/online-user", icon: Wifi, group: "系统", adminOnly: true },
   { label: "WAF 防火墙", path: "/settings/waf", icon: ShieldAlert, group: "系统", adminOnly: true },
   { label: "API 令牌", path: "/settings/api-tokens", icon: KeyRound, group: "系统" },
+  { label: "主题管理", path: "/settings/theme", icon: Palette, group: "系统", adminOnly: true },
   { label: "系统设置", path: "/settings", icon: Settings, group: "系统", adminOnly: true },
 ]
 

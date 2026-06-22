@@ -343,6 +343,7 @@ export interface Setting {
   web_real_ip_header?: string
   agent_real_ip_header?: string
   user_template?: string
+  admin_template?: string
   install_script_linux?: string
   install_script_windows?: string
   enable_plain_ip_in_notification?: boolean
@@ -378,4 +379,26 @@ export interface SettingResponse {
   version?: string
   frontend_templates?: FrontendTemplate[]
   tsdb_enabled?: boolean
+}
+
+// ───────── 主题 ─────────
+export interface Theme {
+  id: number
+  path: string
+  name: string
+  source: "builtin" | "upload" | "github"
+  github_repo?: string
+  release_asset?: string
+  version_tag?: string
+  author?: string
+  repository?: string
+  is_admin: boolean
+  is_official: boolean
+  created_at?: string
+}
+export interface ThemeGithubForm {
+  github_repo: string
+  release_asset: string
+  name?: string
+  is_admin?: boolean
 }

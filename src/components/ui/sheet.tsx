@@ -3,7 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// 右侧滑出抽屉，复用 Radix Dialog 行为 + 设计稿 .sheet 样式。
+// 已统一为居中对话框（复用 .dialog flexcol 样式）；组件名沿用 Sheet/SheetBody 等以减少改动面。
 export const Sheet = DialogPrimitive.Root
 export const SheetTrigger = DialogPrimitive.Trigger
 export const SheetClose = DialogPrimitive.Close
@@ -16,7 +16,7 @@ export const SheetContent = React.forwardRef<
     <DialogPrimitive.Overlay className="overlay" />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn("sheet", className)}
+      className={cn("dialog flexcol", className)}
       style={{ ...(width ? { width } : {}), ...style }}
       {...props}
     >

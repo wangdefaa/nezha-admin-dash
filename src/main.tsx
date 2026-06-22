@@ -20,6 +20,7 @@ import WafPage from "@/pages/waf"
 import ApiTokensPage from "@/pages/api-tokens"
 import SettingsPage from "@/pages/settings"
 import ProfilePage from "@/pages/profile"
+import ThemesPage from "@/pages/themes"
 import NotFoundPage from "@/pages/not-found"
 
 const router = createBrowserRouter(
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
         { path: "settings/online-user", element: <OnlineUsersPage /> },
         { path: "settings/waf", element: <WafPage /> },
         { path: "settings/api-tokens", element: <ApiTokensPage /> },
+        { path: "settings/theme", element: <ThemesPage /> },
         { path: "*", element: <NotFoundPage /> },
       ],
     },

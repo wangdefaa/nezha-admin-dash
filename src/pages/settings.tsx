@@ -18,7 +18,6 @@ const TABS = [
   { key: "site", label: "站点" },
   { key: "agent", label: "Agent 连接" },
   { key: "notify", label: "通知" },
-  { key: "template", label: "前端模板" },
   { key: "oauth2", label: "OAuth2" },
   { key: "maintain", label: "维护信息" },
 ] as const
@@ -115,8 +114,6 @@ export default function SettingsPage() {
     toast.success("已进入维护模式")
   }
 
-  const userTemplates = (setting?.frontend_templates ?? []).filter((t) => t.is_admin !== true)
-
   return (
     <>
       <PageHeader
@@ -133,7 +130,7 @@ export default function SettingsPage() {
         {TABS.map((t) => (
           <button
             key={t.key}
-            className={`tab${tab === t.key ? "active" : ""}`}
+            className={`tab${tab === t.key ? " active" : ""}`}
             onClick={() => setTab(t.key)}
           >
             {t.label}
@@ -272,24 +269,6 @@ export default function SettingsPage() {
               checked={!!form.enable_plain_ip_in_notification}
               onChange={(v) => set("enable_plain_ip_in_notification", v)}
             />
-          </div>
-        )}
-
-        {tab === "template" && (
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="用户前端模板" hint="user_template · 公开状态页所用模板">
-              <Select
-                value={form.user_template ?? ""}
-                onChange={(e) => set("user_template", e.target.value)}
-              >
-                <option value="">默认</option>
-                {userTemplates.map((t) => (
-                  <option key={t.path} value={t.path}>
-                    {t.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
           </div>
         )}
 

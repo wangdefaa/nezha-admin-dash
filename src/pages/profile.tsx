@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useSWR from "swr"
 import { Link2, Link2Off } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { PageHeader } from "@/components/common/page-header"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
@@ -14,10 +15,21 @@ import { ROLES } from "@/lib/constants"
 import type { SettingResponse } from "@/types"
 
 function AccountCard({ onSaved }: { onSaved: () => void }) {
+  const { profile } = useAuth()
   const [original, setOriginal] = useState("")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [rejectPassword, setRejectPassword] = useState(false)
   const [busy, setBusy] = useState(false)
+
+  // 至少绑定一个 OAuth2 才能开启「禁止密码登录」（后端 updateProfile 同样校验）。
+  // 已开启时允许关闭，故 lock 仅在未开启且无绑定时生效。
+  const bindCount = Object.keys(profile?.oauth2_bind ?? {}).length
+  const lockReject = bindCount < 1 && !rejectPassword
+
+  useEffect(() => {
+    setRejectPassword(profile?.reject_password ?? false)
+  }, [profile?.reject_password])
 
   const save = async () => {
     if (!original) return toast.error("请输入原密码")
@@ -27,6 +39,7 @@ function AccountCard({ onSaved }: { onSaved: () => void }) {
         original_password: original,
         new_username: username || undefined,
         new_password: password || undefined,
+        reject_password: rejectPassword,
       })
       toast.success("账号已更新")
       setOriginal("")
@@ -69,6 +82,19 @@ function AccountCard({ onSaved }: { onSaved: () => void }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="留空则不修改"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-4 pt-1">
+          <div className="min-w-0">
+            <div className="text-[13px] font-medium text-fg">禁止密码登录</div>
+            <p className="mt-0.5 text-[11.5px] text-meta">
+              {lockReject ? "需先绑定至少一个 OAuth2 账号" : "启用后本账号仅可通过 OAuth2 登录"}
+            </p>
+          </div>
+          <Switch
+            checked={rejectPassword}
+            onCheckedChange={setRejectPassword}
+            disabled={lockReject}
           />
         </div>
         <Button variant="primary" onClick={save} disabled={busy}>

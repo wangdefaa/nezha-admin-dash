@@ -1,5 +1,5 @@
 // 各资源的 API 调用封装。GET 用 SWR key（见各页面 hook），变更走这里。
-import { apiDelete, apiGet, apiPatch, apiPost, listFetcher } from "@/lib/api"
+import { apiDelete, apiGet, apiPatch, apiPost, apiUpload, listFetcher } from "@/lib/api"
 import type {
   APITokenCreateRequest,
   APITokenCreateResponse,
@@ -13,6 +13,8 @@ import type {
   ServiceForm,
   SettingForm,
   SettingResponse,
+  Theme,
+  ThemeGithubForm,
   UserForm,
   WAFItem,
 } from "@/types"
@@ -96,4 +98,20 @@ export const profileApi = {
   oauth2Login: (provider: string) => apiGet<{ redirect?: string }>(`/oauth2/${provider}`),
   oauth2Bind: (provider: string) => apiGet<{ redirect?: string }>(`/oauth2/${provider}?type=2`),
   oauth2Unbind: (provider: string) => apiPost(`/oauth2/${provider}/unbind`),
+}
+
+// ───────── 主题 ─────────
+export const themeApi = {
+  list: () => apiGet<Theme[]>("/theme"),
+  uploadZip: (file: File, opts?: { version?: string; isAdmin?: boolean }) => {
+    const form = new FormData()
+    form.append("file", file)
+    if (opts?.version) form.append("version", opts.version)
+    if (opts?.isAdmin) form.append("is_admin", "true")
+    return apiUpload<number>("/theme/upload", form)
+  },
+  createGithub: (f: ThemeGithubForm) => apiPost<number>("/theme/github", f),
+  refresh: (id: number) => apiPost(`/theme/${id}/refresh`),
+  apply: (id: number) => apiPost(`/theme/${id}/apply`),
+  batchDelete: (ids: number[]) => apiPost("/batch-delete/theme", ids),
 }

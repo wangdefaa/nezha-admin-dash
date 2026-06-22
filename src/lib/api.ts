@@ -71,6 +71,32 @@ export const apiPost = <T>(path: string, body?: unknown) => request<T>("POST", p
 export const apiPatch = <T>(path: string, body?: unknown) => request<T>("PATCH", path, body)
 export const apiDelete = <T>(path: string, body?: unknown) => request<T>("DELETE", path, body)
 
+// multipart 上传（主题 zip 等）。不设 Content-Type，交给浏览器带 boundary。
+export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  const headers: Record<string, string> = {}
+  const csrf = readCookie("nz-csrf")
+  if (csrf) headers["X-CSRF-Token"] = csrf
+
+  let resp: Response
+  try {
+    resp = await fetch(API_BASE + path, { method: "POST", headers, credentials: "include", body: form })
+  } catch {
+    throw new ApiError("网络错误，请检查连接")
+  }
+
+  updateClockSkew(resp.headers.get("date"))
+  if (resp.status === 401) onUnauthorized?.()
+
+  let json: CommonResponse<T>
+  try {
+    json = (await resp.json()) as CommonResponse<T>
+  } catch {
+    throw new ApiError(`请求失败 (${resp.status})`)
+  }
+  if (!json.success) throw new ApiError(json.error || `请求失败 (${resp.status})`)
+  return json.data as T
+}
+
 // SWR fetcher：直接返回解包后的 data。
 export const swrFetcher = <T>(path: string) => apiGet<T>(path)
 
