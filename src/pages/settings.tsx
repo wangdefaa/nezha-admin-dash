@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/common/page-header"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { Oauth2Editor } from "@/components/settings/oauth2-editor"
 import { swrFetcher } from "@/lib/api"
+import { cn } from "@/lib/utils"
 import { settingApi } from "@/api/resources"
 import { toast } from "@/components/ui/sonner"
 import type { NotificationGroupResponseItem, SettingForm, SettingResponse } from "@/types"
@@ -130,7 +131,7 @@ export default function SettingsPage() {
         {TABS.map((t) => (
           <button
             key={t.key}
-            className={`tab${tab === t.key ? "active" : ""}`}
+            className={cn("tab", tab === t.key && "active")}
             onClick={() => setTab(t.key)}
           >
             {t.label}
