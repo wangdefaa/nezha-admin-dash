@@ -18,8 +18,7 @@ import { cn } from "@/lib/utils"
 import type { SettingResponse } from "@/types"
 
 const OS_TABS: { key: InstallOS; label: string }[] = [
-  { key: "linux", label: "Linux" },
-  { key: "macos", label: "macOS" },
+  { key: "unix", label: "Linux / macOS" },
   { key: "windows", label: "Windows" },
 ]
 
@@ -33,7 +32,7 @@ export function AddServerDialog({
   const nav = useNavigate()
   const { profile } = useAuth()
   const { data: setting } = useSWR<SettingResponse>(open ? "/setting" : null, apiGet)
-  const [os, setOs] = useState<InstallOS>("linux")
+  const [os, setOs] = useState<InstallOS>("unix")
 
   const host = setting?.config?.install_host || "<面板域名:端口>"
   const tls = !!setting?.config?.tls
@@ -45,7 +44,7 @@ export function AddServerDialog({
     linuxScript: setting?.config?.install_script_linux,
     windowsScript: setting?.config?.install_script_windows,
   })
-  const label = OS_TABS.find((t) => t.key === os)?.label ?? "Linux"
+  const label = OS_TABS.find((t) => t.key === os)?.label ?? "Linux / macOS"
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

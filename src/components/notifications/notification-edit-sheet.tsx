@@ -13,6 +13,7 @@ import {
   NOTIFICATION_METHODS,
   NOTIFICATION_TYPES,
   NOTIFICATION_PLACEHOLDERS,
+  NOTIFICATION_TEMPLATES,
 } from "@/lib/constants"
 import { NOTIFICATION_METHOD, NOTIFICATION_TYPE } from "@/types"
 import type { Notification, NotificationForm } from "@/types"
@@ -62,6 +63,10 @@ export function NotificationEditSheet({
   const isGet = form.request_method === NOTIFICATION_METHOD.GET
   const set = <K extends keyof NotificationForm>(k: K, v: NotificationForm[K]) =>
     setForm((f) => ({ ...f, [k]: v }))
+  const applyTemplate = (key: string) => {
+    const tpl = NOTIFICATION_TEMPLATES.find((t) => t.key === key)
+    if (tpl) setForm((f) => ({ ...f, ...tpl.form }))
+  }
 
   const save = async () => {
     if (!form.name.trim() || !form.url.trim()) {
@@ -90,6 +95,19 @@ export function NotificationEditSheet({
           desc={target ? target.name : "新增一个 Webhook 通知渠道"}
         />
         <SheetBody>
+          {!target && (
+            <div>
+              <Label>常用模版</Label>
+              <Select value="" onChange={(e) => applyTemplate(e.target.value)}>
+                <option value="">选择模版快速填充…</option>
+                {NOTIFICATION_TEMPLATES.map((t) => (
+                  <option key={t.key} value={t.key}>
+                    {t.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
           <div>
             <Label>名称</Label>
             <Input

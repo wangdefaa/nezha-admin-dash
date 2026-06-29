@@ -119,17 +119,18 @@ export default function ServersPage() {
     setSel(new Set())
     mutate()
   }
-  const copyInstall = async () => {
+  const copyInstall = async (server: Server) => {
     const host = setting?.config?.install_host
     if (!host) return toast.error("请先在系统设置配置「安装地址」")
     const cmd = linuxInstallCmd({
       host,
       tls: !!setting?.config?.tls,
       secret: profile?.agent_secret || "",
+      uuid: server.uuid,
       linuxScript: setting?.config?.install_script_linux,
     })
     const ok = await copyText(cmd)
-    if (ok) toast.success("已复制 Linux 安装命令")
+    if (ok) toast.success(`已复制 ${server.name} 的安装命令`)
     else toast.error("复制失败，请手动复制")
   }
 
@@ -297,7 +298,7 @@ export default function ServersPage() {
                           <DropdownMenuItem onSelect={() => forceUpdate([s.id])}>
                             <RotateCw className="ic-sm" /> 强制更新
                           </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={copyInstall}>
+                          <DropdownMenuItem onSelect={() => copyInstall(s)}>
                             <ClipboardCopy className="ic-sm" /> 复制安装命令
                           </DropdownMenuItem>
                           <DropdownMenuItem danger onSelect={() => setConfirm({ ids: [s.id] })}>

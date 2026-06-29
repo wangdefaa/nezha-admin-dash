@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/sonner"
+import { PublicNoteEditor } from "@/components/servers/public-note-editor"
 import { serversApi } from "@/api/resources"
 import type { Server, ServerForm } from "@/types"
 
@@ -73,10 +74,9 @@ export function ServerEditSheet({
             <Label>
               公开备注 <span className="font-normal text-meta">(public_note · 游客可见)</span>
             </Label>
-            <Textarea
-              value={form.public_note}
-              onChange={(e) => setForm({ ...form, public_note: e.target.value })}
-              placeholder="对外展示，支持 Markdown"
+            <PublicNoteEditor
+              value={form.public_note ?? ""}
+              onChange={(v) => setForm({ ...form, public_note: v })}
             />
           </div>
           <div>

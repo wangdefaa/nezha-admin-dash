@@ -16,7 +16,7 @@ import { MultiSelect } from "@/components/common/multi-select"
 import { CopyButton } from "@/components/common/copy-button"
 import { toast } from "@/components/ui/sonner"
 import { tokensApi } from "@/api/resources"
-import { ADMIN_SCOPE, EXPIRY_OPTIONS, SCOPE_GROUPS, scopeId, scopeWildcard } from "@/lib/constants"
+import { ALL_SCOPE, EXPIRY_OPTIONS, SCOPE_GROUPS, scopeId, scopeWildcard } from "@/lib/constants"
 import type { APITokenCreateResponse, Server } from "@/types"
 
 // 单个权限分组：组标题 + 全选* + 各 verb 复选。
@@ -168,11 +168,11 @@ export function CreateTokenDialog({
                 <div className="card-soft p-3">
                   <label className="inline-flex cursor-pointer items-center gap-2">
                     <Checkbox
-                      checked={scopes.has(ADMIN_SCOPE)}
-                      onCheckedChange={(v) => toggle(ADMIN_SCOPE, !!v)}
+                      checked={scopes.has(ALL_SCOPE)}
+                      onCheckedChange={(v) => toggle(ALL_SCOPE, !!v)}
                     />
                     <span className="text-[13px] font-medium text-danger">
-                      管理员全权 {ADMIN_SCOPE}
+                      管理员全权 {ALL_SCOPE}
                     </span>
                   </label>
                   <p className="hint">高权限：授予后该令牌可执行所有管理操作,请谨慎勾选。</p>

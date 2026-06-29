@@ -1,4 +1,5 @@
 // 业务常量与枚举标签（与后端 model 对齐）。
+import type { NotificationForm } from "@/types"
 
 // 告警规则可监控指标（model/rule.go）
 export const METRIC_TYPES: { value: string; label: string; cycle?: boolean }[] = [
@@ -82,6 +83,99 @@ export const NOTIFICATION_PLACEHOLDERS = [
   "#SERVER.UDPCONNCOUNT#",
 ]
 
+// 添加通知方式的常用模版（request_method: 1=GET 2=POST；request_type: 1=JSON 2=Form）。
+// URL / Body 中的 <...> 为占位，需用户替换为自己的 token / key。
+export const NOTIFICATION_TEMPLATES: {
+  key: string
+  label: string
+  form: Partial<NotificationForm>
+}[] = [
+  {
+    key: "telegram",
+    label: "Telegram",
+    form: {
+      name: "Telegram",
+      url: "https://api.telegram.org/bot<BOT_TOKEN>/sendMessage",
+      request_method: 2,
+      request_type: 1,
+      request_header: "",
+      request_body: '{"chat_id":"<CHAT_ID>","text":"#NEZHA#","disable_web_page_preview":true}',
+    },
+  },
+  {
+    key: "bark",
+    label: "Bark",
+    form: {
+      name: "Bark",
+      url: "https://api.day.app/<BARK_KEY>/#NEZHA#",
+      request_method: 1,
+      request_type: 1,
+      request_header: "",
+      request_body: "",
+    },
+  },
+  {
+    key: "wecom",
+    label: "企业微信",
+    form: {
+      name: "企业微信",
+      url: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<KEY>",
+      request_method: 2,
+      request_type: 1,
+      request_header: "",
+      request_body: '{"msgtype":"text","text":{"content":"#NEZHA#"}}',
+    },
+  },
+  {
+    key: "dingtalk",
+    label: "钉钉",
+    form: {
+      name: "钉钉",
+      url: "https://oapi.dingtalk.com/robot/send?access_token=<TOKEN>",
+      request_method: 2,
+      request_type: 1,
+      request_header: "",
+      request_body: '{"msgtype":"text","text":{"content":"#NEZHA#"}}',
+    },
+  },
+  {
+    key: "serverchan",
+    label: "Server酱",
+    form: {
+      name: "Server酱",
+      url: "https://sctapi.ftqq.com/<SENDKEY>.send",
+      request_method: 2,
+      request_type: 2,
+      request_header: "",
+      request_body: "title=哪吒监控&desp=#NEZHA#",
+    },
+  },
+  {
+    key: "discord",
+    label: "Discord",
+    form: {
+      name: "Discord",
+      url: "https://discord.com/api/webhooks/<ID>/<TOKEN>",
+      request_method: 2,
+      request_type: 1,
+      request_header: "",
+      request_body: '{"content":"#NEZHA#"}',
+    },
+  },
+  {
+    key: "slack",
+    label: "Slack",
+    form: {
+      name: "Slack",
+      url: "https://hooks.slack.com/services/<WEBHOOK>",
+      request_method: 2,
+      request_type: 1,
+      request_header: "",
+      request_body: '{"text":"#NEZHA#"}',
+    },
+  },
+]
+
 // 用户角色
 export const ROLES = [
   { value: 0, label: "管理员" },
@@ -106,7 +200,7 @@ export const SCOPE_GROUPS: { key: string; label: string; verbs: string[] }[] = [
   { key: "notification", label: "通知方式", verbs: ["read", "write", "delete"] },
   { key: "notification-group", label: "通知组", verbs: ["read", "write", "delete"] },
 ]
-export const ADMIN_SCOPE = "nezha:admin:*"
+export const ALL_SCOPE = "nezha:*"
 export const scopeId = (resource: string, verb: string) => `nezha:${resource}:${verb}`
 export const scopeWildcard = (resource: string) => `nezha:${resource}:*`
 
