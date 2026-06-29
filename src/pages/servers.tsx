@@ -36,6 +36,56 @@ import { useAuth } from "@/store/auth"
 import { cn, copyText } from "@/lib/utils"
 import type { Server, ServerGroupResponseItem, SettingResponse } from "@/types"
 
+type SortKey = "id" | "status" | "owner" | "name" | "group"
+
+// 服务器表格列排序比较（升序语义；方向由调用方按 sortAsc 取反）。
+function compareServers(
+  a: Server,
+  b: Server,
+  key: SortKey,
+  groupOf: Map<number, string[]>,
+): number {
+  switch (key) {
+    case "status":
+      return Number(isOnline(a.last_active)) - Number(isOnline(b.last_active))
+    case "owner":
+      return (a.owner?.username ?? "").localeCompare(b.owner?.username ?? "")
+    case "name":
+      return a.name.localeCompare(b.name)
+    case "group":
+      return (groupOf.get(a.id)?.[0] ?? "").localeCompare(groupOf.get(b.id)?.[0] ?? "")
+    default:
+      return a.id - b.id
+  }
+}
+
+// 可排序表头：点击切换排序列/方向，激活列显示方向箭头。
+function SortableTh({
+  label,
+  col,
+  sortKey,
+  sortAsc,
+  onSort,
+  width,
+}: {
+  label: string
+  col: SortKey
+  sortKey: SortKey
+  sortAsc: boolean
+  onSort: (k: SortKey) => void
+  width?: number
+}) {
+  return (
+    <th style={width ? { width } : undefined}>
+      <button className="inline-flex items-center gap-1 hover:text-fg" onClick={() => onSort(col)}>
+        {label}
+        {sortKey === col &&
+          (sortAsc ? <ChevronUp className="ic-sm" /> : <ChevronDown className="ic-sm" />)}
+      </button>
+    </th>
+  )
+}
+
 export default function ServersPage() {
   const {
     data: servers,
@@ -48,7 +98,15 @@ export default function ServersPage() {
 
   const [q, setQ] = useState("")
   const [group, setGroup] = useState("all")
+  const [sortKey, setSortKey] = useState<SortKey>("id")
   const [sortAsc, setSortAsc] = useState(true)
+  const toggleSort = (key: SortKey) => {
+    if (key === sortKey) setSortAsc((s) => !s)
+    else {
+      setSortKey(key)
+      setSortAsc(true)
+    }
+  }
   const [sel, setSel] = useState<Set<number>>(new Set())
   const [edit, setEdit] = useState<Server | null>(null)
   const [addOpen, setAddOpen] = useState(false)
@@ -82,8 +140,11 @@ export default function ServersPage() {
         ip.toLowerCase().includes(k)
       )
     })
-    return out.sort((a, b) => (sortAsc ? a.id - b.id : b.id - a.id))
-  }, [servers, q, groupServerIds, sortAsc])
+    return out.sort((a, b) => {
+      const c = compareServers(a, b, sortKey, groupOf)
+      return sortAsc ? c : -c
+    })
+  }, [servers, q, groupServerIds, sortAsc, sortKey, groupOf])
 
   const onlineCount = (servers ?? []).filter((s) => isOnline(s.last_active)).length
   const allChecked = filtered.length > 0 && filtered.every((s) => sel.has(s.id))
@@ -207,20 +268,42 @@ export default function ServersPage() {
                     onCheckedChange={toggleAll}
                   />
                 </th>
-                <th style={{ width: 72 }}>
-                  <button
-                    className="inline-flex items-center gap-1 hover:text-fg"
-                    onClick={() => setSortAsc((s) => !s)}
-                    title="按 ID 排序"
-                  >
-                    ID{" "}
-                    {sortAsc ? <ChevronUp className="ic-sm" /> : <ChevronDown className="ic-sm" />}
-                  </button>
-                </th>
-                <th>状态</th>
-                <th>归属</th>
-                <th>名称</th>
-                <th>分组</th>
+                <SortableTh
+                  label="ID"
+                  col="id"
+                  sortKey={sortKey}
+                  sortAsc={sortAsc}
+                  onSort={toggleSort}
+                  width={72}
+                />
+                <SortableTh
+                  label="状态"
+                  col="status"
+                  sortKey={sortKey}
+                  sortAsc={sortAsc}
+                  onSort={toggleSort}
+                />
+                <SortableTh
+                  label="归属"
+                  col="owner"
+                  sortKey={sortKey}
+                  sortAsc={sortAsc}
+                  onSort={toggleSort}
+                />
+                <SortableTh
+                  label="名称"
+                  col="name"
+                  sortKey={sortKey}
+                  sortAsc={sortAsc}
+                  onSort={toggleSort}
+                />
+                <SortableTh
+                  label="分组"
+                  col="group"
+                  sortKey={sortKey}
+                  sortAsc={sortAsc}
+                  onSort={toggleSort}
+                />
                 <th>IP</th>
                 <th>版本</th>
                 <th style={{ width: 48 }}></th>
